@@ -1,5 +1,5 @@
 <?php include "includes/admin_header.php"; ?>
-
+<?php delete_category(); ?>
     <div id="wrapper">
 
         <!-- Navigation -->
@@ -17,24 +17,18 @@
                             <small>Author Name</small>
                         </h1>
                         <div class="col-xs-6">
+<?php insert_categories(); ?>
                           <form action="" method="POST">
                             <div class="form-group">
                             <label for="cat_title">Add Category</label>
                               <input class="form-control" type="text" name="cat_title">
                             </div>
                             <div class="form-group">
-                              <input class="btn btn-primary" type="text" name="submit" value="Add Category">
+                              <input class="btn btn-primary" type="submit" name="submit" value="Add Category">
                             </div>
                           </form>
                         </div> <!--Add Category Form -->
                         <div class="col-xs-6">
-<?php
-  $query = "SELECT * FROM categories";
-  $select_admin_categories = mysqli_query($connection, $query);
-  if(!$select_admin_categories){
-    die("There was an error " . mysqli_error($connection));
-  }
-?>
                           <table class="table table-bordered table-hover">
                             <thead>
                               <tr>
@@ -43,23 +37,18 @@
                               </tr>
                             </thead>
                             <tbody>
-<?php
-  while($row = mysqli_fetch_assoc($select_admin_categories)){
-    $cat_id = $row['cat_id'];
-    $cat_title = $row['cat_title'];
-    echo "<tr>
-    <td>{$cat_id}</td>
-    <td>{$cat_title}</td>
-  </tr>";
-  }
-?>
+<?php render_table(); ?>
                             </tbody>
                           </table>
                         </div>
                     </div>
                 </div>
                 <!-- /.row -->
-
+<?php
+  if(isset($_GET['edit'])) {
+    include 'includes/update_categories.php';
+  }
+?>
             </div>
             <!-- /.container-fluid -->
 

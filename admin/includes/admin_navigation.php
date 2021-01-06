@@ -45,7 +45,7 @@
                     <li>
                         <a href="bootstrap-grid.html"><i class="fa fa-fw fa-wrench"></i> Categories</a>
                     </li>
-                    <li class="active">
+                    <li>
                         <a href="blank-page.html"><i class="fa fa-fw fa-file"></i> Comments</a>
                     </li>
                     <li>
@@ -59,7 +59,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class="active">
+                    <li>
                         <a href="blank-page.html"><i class="fa fa-fw fa-file"></i> Profile</a>
                     </li>
                 </ul>
