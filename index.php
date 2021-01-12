@@ -15,8 +15,11 @@
             <!-- Blog Entries Column -->
             <div class="col-md-8">
 <?php
-$query = "SELECT * FROM posts";
+$query = "SELECT * FROM posts WHERE post_status = 'Published'";
 $select_all_posts_query = mysqli_query($connection, $query);
+if(!mysqli_fetch_assoc($select_all_posts_query)){
+    echo "<h1 class='text-center'>Sorry, no posts are published yet!</h1>";
+}
 while($row = mysqli_fetch_assoc($select_all_posts_query)){
     $post_id = $row['post_id'];
     $post_title = $row['post_title'];
@@ -24,9 +27,10 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
     $post_date = $row['post_date'];
     $post_image = $row['post_image'];
     $post_content = $row['post_content'];
-    if(strlen($post_content) > 100){
-        $post_content = substr($post_content, 0, 100) . "...";
-    }
+    $post_status = $row['post_status'];
+        if(strlen($post_content) > 100){
+            $post_content = substr($post_content, 0, 100) . "...";
+        }
 
 ?>
                 <h1 class="page-header">
@@ -46,7 +50,7 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
                 <a href="post.php?p_id=<?php echo $post_id; ?>"><img class="img-responsive" src="./images/<?php echo $post_image; ?>" alt=""></a>
                 <hr>
                 <p><?php echo $post_content; ?></p>
-                <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+                <a class="btn btn-primary" href="post.php?p_id=<?php echo $post_id; ?>">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
 
                 <hr>
 <?php } ?>
