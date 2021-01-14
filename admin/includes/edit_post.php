@@ -95,7 +95,18 @@ if(isset($_GET['p_id'])){
   </div>
   <div class="form-group">
     <label for="post_status">Post Status</label>
-    <input type="text" class="form-control" name="post_status" value=<?php echo $post_status; ?>>
+    <select name="post_status" value=<?php echo $post_status; ?>>
+<?php 
+  if($post_status === "Draft"){
+    echo "<option value='Draft' selected>Draft</option>
+          <option value='Published'>Published</option>";
+  } else {
+    echo "<option value='Draft'>Draft</option>
+          <option value='Published' selected>Published</option>";
+  }
+
+?>
+    </select>
   </div>
   <div class="form-group">
     <img width=100 src="../images/<?php echo $post_image; ?>" alt="">
