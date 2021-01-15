@@ -18,7 +18,7 @@
 if(isset($_GET['category'])){
   $post_category_id = $_GET['category'];
 }
-$query = "SELECT * FROM posts WHERE post_category_id = {$post_category_id}";
+$query = "SELECT * FROM posts WHERE post_category_id = {$post_category_id} ORDER BY post_date DESC";
 $select_all_posts_query = mysqli_query($connection, $query);
 while($row = mysqli_fetch_assoc($select_all_posts_query)){
     $post_id = $row['post_id'];
@@ -49,7 +49,7 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
                 <a href="post.php?p_id=<?php echo $post_id; ?>"><img class="img-responsive" src="./images/<?php echo $post_image; ?>" alt=""></a>
                 <hr>
                 <p><?php echo $post_content; ?></p>
-                <a class="btn btn-primary" href="#">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
+                <a class="btn btn-primary" href="post.php?p_id=<?php echo $post_id; ?>">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
 
                 <hr>
 <?php } ?>

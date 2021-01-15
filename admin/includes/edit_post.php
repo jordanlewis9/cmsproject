@@ -6,7 +6,6 @@ if(isset($_GET['p_id'])){
   $edit_post = mysqli_query($connection, $query);
 
   confirmQuery($edit_post);
-
   while($row = mysqli_fetch_assoc($edit_post)){
     $post_id = $row['post_id'];
     $post_author = $row['post_author'];
@@ -18,6 +17,10 @@ if(isset($_GET['p_id'])){
     $post_content = $row['post_content'];
     $post_comment_count = $row['post_comment_count'];
     $post_date = $row['post_date'];
+  }
+
+  if(isset($_GET['updated'])){
+    echo "<p class='bg-success'>Post Updated. <a href='../post.php?p_id={$post_id}' target='_blank'>View Post</a> or <a href='posts.php'>Edit More Posts</a></p>";
   }
 
   // POSTING EDIT
@@ -58,7 +61,7 @@ if(isset($_GET['p_id'])){
     $update_post = mysqli_query($connection, $query);
 
     confirmQuery($update_post);
-    header('Location: posts.php');
+    header("Location: posts.php?source=edit_post&p_id={$post_id}&updated=success");
     exit;
   }
 ?>
@@ -66,7 +69,7 @@ if(isset($_GET['p_id'])){
 
   <div class="form-group">
     <label for="title">Post Title</label>
-    <input type="text" class="form-control" name="title" value=<?php echo $post_title; ?>>
+    <input type="text" class="form-control" name="title" value="<?php echo $post_title; ?>">
   </div>
   <div class="form-group">
     <select name="post_category_id" id="post_category">
@@ -91,11 +94,11 @@ if(isset($_GET['p_id'])){
   </div>
   <div class="form-group">
     <label for="author">Post Author</label>
-    <input type="text" class="form-control" name="author" value=<?php echo $post_author; ?>>
+    <input type="text" class="form-control" name="author" value="<?php echo $post_author; ?>"">
   </div>
   <div class="form-group">
     <label for="post_status">Post Status</label>
-    <select name="post_status" value=<?php echo $post_status; ?>>
+    <select name="post_status" value="<?php echo $post_status; ?>"">
 <?php 
   if($post_status === "Draft"){
     echo "<option value='Draft' selected>Draft</option>
@@ -110,15 +113,15 @@ if(isset($_GET['p_id'])){
   </div>
   <div class="form-group">
     <img width=100 src="../images/<?php echo $post_image; ?>" alt="">
-    <input type="file" class="form-control" name="image" value=<?php echo $post_image; ?>>
+    <input type="file" class="form-control" name="image" value="<?php echo $post_image; ?>"">
   </div>
   <div class="form-group">
     <label for="post_tags">Post Tags</label>
-    <input type="text" class="form-control" name="post_tags" value=<?php echo $post_tags; ?>>
+    <input type="text" class="form-control" name="post_tags" value="<?php echo $post_tags; ?>">
   </div>
   <div class="form-group">
     <label for="post_content">Post Content</label>
-    <textarea class="form-control" name="post_content" cols="30" rows="10"><?php echo $post_content; ?></textarea>
+    <textarea class="form-control" id="body" name="post_content" cols="30" rows="10"><?php echo $post_content; ?></textarea>
   </div>
   <div class="form-group">
     <input type="submit" class="btn btn-primary" name="update_post" value="Update Post">

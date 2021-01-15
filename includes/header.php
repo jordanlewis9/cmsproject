@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+<?php session_start(); ?>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

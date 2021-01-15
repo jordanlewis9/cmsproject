@@ -15,7 +15,7 @@
             <!-- Blog Entries Column -->
             <div class="col-md-8">
 <?php
-$query = "SELECT * FROM posts WHERE post_status = 'Published'";
+$query = "SELECT * FROM posts WHERE post_status = 'Published' ORDER BY post_date DESC";
 $select_all_posts_query = mysqli_query($connection, $query);
 if(!mysqli_fetch_assoc($select_all_posts_query)){
     echo "<h1 class='text-center'>Sorry, no posts are published yet!</h1>";

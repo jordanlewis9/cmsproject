@@ -1,6 +1,54 @@
+<?php
+  if(isset($_POST['checkBoxArray'])){
+    foreach($_POST['checkBoxArray'] as $postValueId){
+      $bulk_options = $_POST['bulk_options'];
+      switch($bulk_options){
+        case 'Published':
+          $query = "UPDATE posts SET post_status = '{$bulk_options}' WHERE post_id = $postValueId";
+          $update_to_published = mysqli_query($connection, $query);
+          break;
+        case 'Draft':
+          $query = "UPDATE posts SET post_status = '{$bulk_options}' WHERE post_id = $postValueId";
+          $update_to_draft = mysqli_query($connection, $query);
+          break;
+        case 'delete':
+          $query = "DELETE FROM posts WHERE post_id = $postValueId";
+          $mass_delete = mysqli_query($connection, $query);
+          break;
+        default:
+          header("Location: posts.php?message=action");
+          exit;
+      }
+    }
+    header("Location: posts.php");
+    exit;
+  }
+
+  if(isset($_GET['message'])){
+    echo "<p>Please select an action</p>";
+  }
+
+?>
+
+<form action="" method="POST">
+
+<div id="bulkOptionsContainer" class="col-xs-4">
+    <select class="form-control" name="bulk_options" id="">
+      <option value="">--Select Option--</option>
+      <option value="Published">Publish</option>
+      <option value="Draft">Draft</option>
+      <option value="delete">Delete</option>
+    </select>
+  </div>
+  <div class="col-xs-4">
+    <input type="submit" name="submit" class="btn btn-success" value="Apply">
+    <a class="btn btn-primary" href="add_post.php">Add New</a>
+  </div>
+
 <table class="table table-bordered table-hover">
                       <thead>
                         <tr>
+                          <th><input id="selectAllBoxes" type="checkbox"></th>
                           <th>Id</th>
                           <th>Author</th>
                           <th>Title</th>
@@ -30,6 +78,7 @@
     $post_date = $row['post_date'];
 
     echo "<tr>
+          <td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value={$post_id}></td>
           <td>{$post_id}</td>
           <td>{$post_author}</td>
           <td>{$post_title}</td>";
@@ -51,7 +100,7 @@
 ?>
                       </tbody>
                     </table>
-
+</form>
 <?php
 
 if(isset($_GET['delete'])){

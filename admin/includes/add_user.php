@@ -19,7 +19,7 @@
     $create_user_query = mysqli_query($connection, $query);
 
     confirmQuery($create_user_query);
-    header('Location: users.php');
+    header("Location: users.php?new_user={$username}");
     exit;
   }
 
