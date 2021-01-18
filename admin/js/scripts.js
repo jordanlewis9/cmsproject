@@ -17,7 +17,6 @@ const checkBoxes = document.querySelectorAll('.checkBoxes');
 
 const handleAllBoxClick = (e) => {
   if(e.target.checked){
-    console.log('hi')
     checkBoxes.forEach(box => box.checked = true)
   } else {
     checkBoxes.forEach(box => box.checked = false)

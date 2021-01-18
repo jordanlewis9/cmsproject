@@ -9,7 +9,18 @@
 ?>
     <!-- Page Content -->
     <div class="container">
+<?php
 
+    if(isset($_GET['signed_up'])){
+        $message = $_GET['signed_up'];
+        echo "<p class='bg-success'>$message</p>";
+    }
+
+    if(isset($_GET['signed_in'])){
+        $message = $_GET['signed_in'];
+        echo "<p class=bg-success'>$message</p>";
+    }
+?>
         <div class="row">
 
             <!-- Blog Entries Column -->

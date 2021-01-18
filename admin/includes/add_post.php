@@ -21,8 +21,10 @@
     $create_post_query = mysqli_query($connection, $query);
 
     confirmQuery($create_post_query);
-    header('Location: posts.php');
+    $new_post_id = mysqli_insert_id($connection);
+    header("Location: posts.php?post_status={$post_status}&new_post_id={$new_post_id}");
     exit;
+
   }
 
 

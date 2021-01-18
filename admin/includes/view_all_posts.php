@@ -24,6 +24,16 @@
     exit;
   }
 
+  if(isset($_GET['post_status'])){
+    $status = $_GET['post_status'];
+    $new_post_id = $_GET['new_post_id'];
+    if ($status === 'Published'){
+      echo "<p class='bg-success'>Post published successfully! <a href='../post.php?p_id={$new_post_id}'>View here</a></p>";
+    } else {
+      echo "<p class='bg-success'>Post draft successfully saved.</p>";
+    }
+  }
+
   if(isset($_GET['message'])){
     echo "<p>Please select an action</p>";
   }
@@ -42,7 +52,7 @@
   </div>
   <div class="col-xs-4">
     <input type="submit" name="submit" class="btn btn-success" value="Apply">
-    <a class="btn btn-primary" href="add_post.php">Add New</a>
+    <a class="btn btn-primary" href="posts.php?source=add_post">Add New</a>
   </div>
 
 <table class="table table-bordered table-hover">
@@ -58,6 +68,7 @@
                           <th>Tags</th>
                           <th>Comments</th>
                           <th>Date</th>
+                          <th>View Post</th>
                           <th>Edit</th>
                           <th>Delete</th>
                         </tr>
@@ -81,7 +92,7 @@
           <td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value={$post_id}></td>
           <td>{$post_id}</td>
           <td>{$post_author}</td>
-          <td>{$post_title}</td>";
+          <td><a href='../post.php?p_id={$post_id}'>{$post_title}</a></td>";
     $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
     $category_title = mysqli_query($connection, $query);
     while($name_title = mysqli_fetch_assoc($category_title)){
@@ -93,6 +104,7 @@
           <td>{$post_tags}</td>
           <td>{$post_comment_count}</td>
           <td>{$post_date}</td>
+          <td><a href='../post.php?p_id={$post_id}'>View Post</a></td>
           <td><a href='posts.php?source=edit_post&p_id={$post_id}'>Edit</a></td>
           <td><a href='posts.php?delete={$post_id}'>Delete</a></td>
           </tr>";

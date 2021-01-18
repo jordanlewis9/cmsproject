@@ -15,6 +15,7 @@ if(isset($_GET['u_id'])){
     $user_lastname = $row['user_lastname'];
     $user_email = $row['user_email'];
     $user_password = $row['user_password'];
+    $randSalt = $row['randSalt'];
   }
 
   // POSTING EDIT
@@ -40,13 +41,15 @@ if(isset($_GET['u_id'])){
     //   }
     // }
 
+    $hashed_password = crypt($edit_user_password, $randSalt);
+
     $query = "UPDATE users SET ";
     $query .= "username = '{$edit_username}', ";
     $query .= "user_role = '{$edit_user_role}', ";
     $query .= "user_firstname = '{$edit_user_firstname}', ";
     $query .= "user_lastname = '{$edit_user_lastname}', ";
     $query .= "user_email = '{$edit_user_email}', ";
-    $query .= "user_password = '{$edit_user_password}' ";
+    $query .= "user_password = '{$hashed_password}' ";
     $query .= "WHERE user_id = {$user_id}";
 
     $update_user = mysqli_query($connection, $query);

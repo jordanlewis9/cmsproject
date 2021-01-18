@@ -23,7 +23,10 @@ if(isset($_POST['login'])){
     $db_user_firstname = $row['user_firstname'];
     $db_user_lastname = $row['user_lastname'];
     $db_user_role = $row['user_role'];
+    $salt = $row['randSalt'];
   }
+
+  $password = crypt($password, $db_user_password);
 
   if($username === $db_username && $password === $db_user_password){
     $_SESSION['username'] = $db_username;
@@ -31,9 +34,16 @@ if(isset($_POST['login'])){
     $_SESSION['lastname'] = $db_user_lastname;
     $_SESSION['user_role'] = $db_user_role;
     $_SESSION['user_id'] = $db_user_id;
-    header('Location: ../admin/index.php');
+    if ($db_user_role === 'Admin'){
+      header('Location: ../admin/index.php');
+      exit;
+    } else {
+      $message = "Welcome, $db_username";
+      header("Location: ../index.php?signed_in=$message");
+    }
   }  else {
-    header('Location: ../index.php');
+    $message = "Welcome, $db_username";
+    header("Location: ../index.php?signed_in=$message");
   }
 }
 
