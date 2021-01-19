@@ -15,12 +15,22 @@
 const allBoxes = document.querySelector('#selectAllBoxes');
 const checkBoxes = document.querySelectorAll('.checkBoxes');
 
-const handleAllBoxClick = (e) => {
-  if(e.target.checked){
-    checkBoxes.forEach(box => box.checked = true)
-  } else {
-    checkBoxes.forEach(box => box.checked = false)
+if (allBoxes){
+  const handleAllBoxClick = (e) => {
+    if(e.target.checked){
+      checkBoxes.forEach(box => box.checked = true)
+    } else {
+      checkBoxes.forEach(box => box.checked = false)
+    }
   }
+  
+  allBoxes.addEventListener('click', handleAllBoxClick);
 }
 
-allBoxes.addEventListener('click', handleAllBoxClick);
+var div_box = "<div id='load-screen'><div id='loading'></div></div>";
+
+$("body").prepend(div_box);
+
+$("#load-screen").delay(300).fadeOut(600, function(){
+  $(this).remove();
+});

@@ -14,11 +14,14 @@
 
 <script>
 $(document).ready(function(){
-    ClassicEditor
-        .create(document.querySelector('#body'))
+    var textBody = document.querySelector('#body');
+    if(textBody){
+        ClassicEditor
+        .create(textBody)
         .catch(err => {
             console.error(err);
         })
+    }
 })
 
 </script>

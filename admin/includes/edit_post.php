@@ -55,7 +55,8 @@ if(isset($_GET['p_id'])){
     $query .= "post_status = '{$edit_post_status}', ";
     $query .= "post_tags = '{$edit_post_tags}', ";
     $query .= "post_content = '{$edit_post_content}', ";
-    $query .= "post_image = '{$edit_post_image}' ";
+    $query .= "post_image = '{$edit_post_image}', ";
+    $query .= "post_views_count = 0 ";
     $query .= "WHERE post_id = {$post_id}";
 
     $update_post = mysqli_query($connection, $query);
@@ -98,7 +99,7 @@ if(isset($_GET['p_id'])){
   </div>
   <div class="form-group">
     <label for="post_status">Post Status</label>
-    <select name="post_status" value="<?php echo $post_status; ?>"">
+    <select name="post_status">
 <?php 
   if($post_status === "Draft"){
     echo "<option value='Draft' selected>Draft</option>

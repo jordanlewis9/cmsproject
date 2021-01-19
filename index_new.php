@@ -25,14 +25,22 @@
 
             <!-- Blog Entries Column -->
             <div class="col-md-8">
+
             <h1 class="page-header">
                     Page Heading
                     <small>Secondary Text</small>
                 </h1>
+
 <?php
-$query = "SELECT * FROM posts WHERE post_status = 'Published' ORDER BY post_date DESC";
+
+  if(isset($_GET['page'])) {
+  $start_index = $_GET['page']* 5 - 5;
+  } else {
+  $start_index = 0;
+}
+$query = "SELECT * FROM posts WHERE post_status = 'Published' ORDER BY post_id ASC LIMIT {$start_index}, 5";
 $select_all_posts_query = mysqli_query($connection, $query);
-if(!mysqli_fetch_assoc($select_all_posts_query)){
+if(mysqli_num_rows($select_all_posts_query) === 0){
     echo "<h1 class='text-center'>Sorry, no posts are published yet!</h1>";
 }
 while($row = mysqli_fetch_assoc($select_all_posts_query)){
@@ -49,7 +57,6 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
         }
 
 ?>
-
                 <!-- First Blog Post -->
                 <h2>
                     <a href="post.php?p_id=<?php echo $post_id; ?>"><?php echo $post_title; ?></a>

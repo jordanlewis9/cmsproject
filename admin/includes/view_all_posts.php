@@ -1,4 +1,28 @@
 <?php
+  function clonePost($id) {
+    global $connection;
+
+    $query = "SELECT * FROM posts WHERE post_id = $id";
+    $cloned_post = mysqli_query($connection, $query);
+    confirmQuery($cloned_post);
+
+    while($row = mysqli_fetch_assoc($cloned_post)){
+      $post_category_id = $row['post_category_id'];
+      $post_title = $row['post_title'];
+      $post_author = $row['post_author'];
+      $post_author_id = $row['post_author_id'];
+      $post_image = $row['post_image'];
+      $post_content = $row['post_content'];
+      $post_tags = $row['post_tags'];
+    }
+
+    $query = "INSERT INTO posts (post_category_id, post_title, post_author, post_author_id, post_date, post_image, post_content, post_tags) ";
+    $query .= "VALUES ({$post_category_id}, '{$post_title}', '{$post_author}', {$post_author_id}, now(), '{$post_image}', '{$post_content}', '{$post_tags}')";
+    $new_cloned_post = mysqli_query($connection, $query);
+    confirmQuery($new_cloned_post);
+  }
+
+
   if(isset($_POST['checkBoxArray'])){
     foreach($_POST['checkBoxArray'] as $postValueId){
       $bulk_options = $_POST['bulk_options'];
@@ -14,6 +38,9 @@
         case 'delete':
           $query = "DELETE FROM posts WHERE post_id = $postValueId";
           $mass_delete = mysqli_query($connection, $query);
+          break;
+        case 'clone':
+          clonePost($postValueId);
           break;
         default:
           header("Location: posts.php?message=action");
@@ -48,6 +75,7 @@
       <option value="Published">Publish</option>
       <option value="Draft">Draft</option>
       <option value="delete">Delete</option>
+      <option value="clone">Clone</option>
     </select>
   </div>
   <div class="col-xs-4">
@@ -68,14 +96,14 @@
                           <th>Tags</th>
                           <th>Comments</th>
                           <th>Date</th>
-                          <th>View Post</th>
+                          <th>Views</th>
                           <th>Edit</th>
                           <th>Delete</th>
                         </tr>
                       </thead>
                       <tbody>
 <?php 
-  $query = "SELECT * FROM posts";
+  $query = "SELECT * FROM posts ORDER BY post_id DESC";
   $all_posts = mysqli_query($connection, $query);
   while($row = mysqli_fetch_assoc($all_posts)){
     $post_id = $row['post_id'];
@@ -87,6 +115,7 @@
     $post_tags = $row['post_tags'];
     $post_comment_count = $row['post_comment_count'];
     $post_date = $row['post_date'];
+    $post_views = $row['post_views_count'];
 
     echo "<tr>
           <td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value={$post_id}></td>
@@ -104,9 +133,9 @@
           <td>{$post_tags}</td>
           <td>{$post_comment_count}</td>
           <td>{$post_date}</td>
-          <td><a href='../post.php?p_id={$post_id}'>View Post</a></td>
+          <td>{$post_views}</td>
           <td><a href='posts.php?source=edit_post&p_id={$post_id}'>Edit</a></td>
-          <td><a href='posts.php?delete={$post_id}'>Delete</a></td>
+          <td><a onClick='javascript: return confirm(\"Are you sure you want to delete this item?\")' href='posts.php?delete={$post_id}'>Delete</a></td>
           </tr>";
   }
 ?>
