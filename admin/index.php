@@ -2,6 +2,12 @@
 
     <div id="wrapper">
 
+<?php
+
+    $count_users = users_online();
+
+?>
+
         <!-- Navigation -->
 <?php include "includes/admin_navigation.php"; ?>
 

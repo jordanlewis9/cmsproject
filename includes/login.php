@@ -41,8 +41,8 @@ if(isset($_POST['login'])){
       $message = "Welcome, $db_username";
       header("Location: ../index.php?signed_in=$message");
     }
-  }  else {
-    $message = "Welcome, $db_username";
+  } else {
+    $message = "Username or password do not match our records. Please try again.";
     header("Location: ../index.php?signed_in=$message");
   }
 }
