@@ -9,7 +9,6 @@
     while($row = mysqli_fetch_assoc($self_query)){
     $user_id = $row['user_id'];
     $username = $row['username'];
-    $user_role = $row['user_role'];
     $user_firstname = $row['user_firstname'];
     $user_lastname = $row['user_lastname'];
     $user_email = $row['user_email'];
@@ -19,11 +18,16 @@
 
     if(isset($_POST['update_self'])){
       $edit_username = $_POST['username'];
-      $edit_user_role = $_POST['user_role'];
       $edit_user_firstname = $_POST['user_firstname'];
       $edit_user_lastname = $_POST['user_lastname'];
       $edit_user_email = $_POST['user_email'];
       $edit_user_password = $_POST['user_password'];
+
+      if(empty($edit_user_password)){
+        $edit_user_password = $user_password;
+      } else {
+        $edit_user_password = password_hash($edit_user_password, PASSWORD_BCRYPT, array('cost' => 12));
+      }
 
       $query = "UPDATE users SET ";
       $query .= "username = '{$edit_username}', ";
@@ -66,19 +70,6 @@
     <input type="text" class="form-control" name="username" value=<?php echo $username; ?>>
   </div>
   <div class="form-group">
-    <select name="user_role" id="user_role">
-<?php
-  if($user_role === "Admin"){
-    echo "<option value='Admin' selected>Admin</option>
-          <option value='Subscriber'>Subscriber</option>";
-  } else {
-    echo "<option value='Admin'>Admin</option>
-          <option value='Subscriber' selected>Subscriber</option>";
-  }
-?>
-    </select>
-  </div>
-  <div class="form-group">
     <label for="user_firstname">First Name</label>
     <input type="text" class="form-control" name="user_firstname" value=<?php echo $user_firstname; ?>>
   </div>
@@ -92,7 +83,7 @@
   </div>
   <div class="form-group">
     <label for="user_password">Password</label>
-    <input type="password" class="form-control" name="user_password" value=<?php echo $user_password; ?>>
+    <input type="password" class="form-control" name="user_password" autocomplete="off">
   </div>
   <div class="form-group">
     <input type="submit" class="btn btn-primary" name="update_self" value="Update Self">

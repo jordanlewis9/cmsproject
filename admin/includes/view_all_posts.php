@@ -113,9 +113,12 @@
     $post_status = $row['post_status'];
     $post_image = $row['post_image'];
     $post_tags = $row['post_tags'];
-    $post_comment_count = $row['post_comment_count'];
     $post_date = $row['post_date'];
     $post_views = $row['post_views_count'];
+
+    $comment_query = "SELECT * FROM comments WHERE comment_post_id = {$post_id}";
+    $num_comments = mysqli_query($connection, $comment_query);
+    $post_comment_count = mysqli_num_rows($num_comments);
 
     echo "<tr>
           <td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value={$post_id}></td>
@@ -131,7 +134,7 @@
     echo "<td>{$post_status}</td>
           <td><img width=100 src='../images/{$post_image}' alt='Blog image preview'></td>
           <td>{$post_tags}</td>
-          <td>{$post_comment_count}</td>
+          <td><a href='comments.php?id={$post_id}'>{$post_comment_count}</a></td>
           <td>{$post_date}</td>
           <td>{$post_views}</td>
           <td><a href='posts.php?source=edit_post&p_id={$post_id}'>Edit</a></td>

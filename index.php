@@ -33,8 +33,6 @@
 
 <?php
 
-print_r($_SESSION);
-
     if(isset($_POST['submit'])){
         $_SESSION['posts_per_page'] = $_POST['posts_per_page'];
         header("Location: index.php?page=1");

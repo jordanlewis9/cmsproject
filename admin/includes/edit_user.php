@@ -15,7 +15,6 @@ if(isset($_GET['u_id'])){
     $user_lastname = $row['user_lastname'];
     $user_email = $row['user_email'];
     $user_password = $row['user_password'];
-    $randSalt = $row['randSalt'];
   }
 
   // POSTING EDIT
@@ -41,7 +40,23 @@ if(isset($_GET['u_id'])){
     //   }
     // }
 
-    $hashed_password = crypt($edit_user_password, $randSalt);
+    // if(!empty($edit_user_password)){
+    //   $query_password = "SELECT user_password FROM users WHERE user_id = $user_password";
+    //   $get_user_query = mysqli_query($connection, $query_password);
+    //   confirmQuery($get_user_query);
+
+    //   $row = mysqli_fetch_assoc($get_user_query);
+
+    //   $edit_user_password = $row['user_password'];
+    // }
+
+    if (empty($edit_user_password)) {
+      $edit_user_password = $user_password;
+    } else {
+      $edit_user_password = password_hash($edit_user_password, PASSWORD_BCRYPT, array('cost' => 12));
+    }
+
+
 
     $query = "UPDATE users SET ";
     $query .= "username = '{$edit_username}', ";
@@ -49,7 +64,7 @@ if(isset($_GET['u_id'])){
     $query .= "user_firstname = '{$edit_user_firstname}', ";
     $query .= "user_lastname = '{$edit_user_lastname}', ";
     $query .= "user_email = '{$edit_user_email}', ";
-    $query .= "user_password = '{$hashed_password}' ";
+    $query .= "user_password = '{$edit_user_password}' ";
     $query .= "WHERE user_id = {$user_id}";
 
     $update_user = mysqli_query($connection, $query);
@@ -96,10 +111,13 @@ if(isset($_GET['u_id'])){
   </div>
   <div class="form-group">
     <label for="user_password">Password</label>
-    <input type="password" class="form-control" name="user_password" value=<?php echo $user_password; ?>>
+    <input type="password" class="form-control" name="user_password" autocomplete="off">
   </div>
   <div class="form-group">
     <input type="submit" class="btn btn-primary" name="update_user" value="Update User">
   </div>
 </form>
-<?php } ?>
+<?php } else {
+  header("Location: index.php");
+  exit;
+}?>
