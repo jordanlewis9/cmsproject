@@ -1,6 +1,6 @@
 <?php
 if(isset($_GET['u_id'])){
-  $user_id = $_GET['u_id'];
+  $user_id = esc($_GET['u_id']);
 
   $query = "SELECT * FROM users WHERE user_id = {$user_id}";
   $edit_user = mysqli_query($connection, $query);
@@ -19,12 +19,12 @@ if(isset($_GET['u_id'])){
 
   // POSTING EDIT
   if(isset($_POST['update_user'])){
-    $edit_username = $_POST['username'];
-    $edit_user_role = $_POST['user_role'];
-    $edit_user_firstname = $_POST['user_firstname'];
-    $edit_user_lastname = $_POST['user_lastname'];
-    $edit_user_email = $_POST['user_email'];
-    $edit_user_password = $_POST['user_password'];
+    $edit_username = esc($_POST['username']);
+    $edit_user_role = esc($_POST['user_role']);
+    $edit_user_firstname = esc($_POST['user_firstname']);
+    $edit_user_lastname = esc($_POST['user_lastname']);
+    $edit_user_email = esc($_POST['user_email']);
+    $edit_user_password = esc($_POST['user_password']);
 
     // $edit_post_image = $_FILES['image']['name'];
     // $edit_post_image_temp = $_FILES['image']['tmp_name'];

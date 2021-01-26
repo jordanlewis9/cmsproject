@@ -46,33 +46,45 @@
 <?php
 
 if(isset($_GET['delete'])){
-  $delete_user_id = $_GET['delete'];
+  if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === "Admin") {
+    $delete_user_id = esc($_GET['delete']);
 
-  $query = "DELETE FROM users WHERE user_id = {$delete_user_id}";
-  $delete_query = mysqli_query($connection, $query);
-
-  confirmQuery($delete_query);
-  header('Location: users.php');
+    $query = "DELETE FROM users WHERE user_id = {$delete_user_id}";
+    $delete_query = mysqli_query($connection, $query);
+  
+    confirmQuery($delete_query);
+    header('Location: users.php');
+    exit;
+  }
+  header("Location: ../index.php");
   exit;
 }
 
 if(isset($_GET['change_to_admin'])){
-  $change_to_admin_id = $_GET['change_to_admin'];
+  if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === "Admin"){
+    $change_to_admin_id = esc($_GET['change_to_admin']);
 
-  $query = "UPDATE users SET user_role = 'Admin' WHERE user_id = $change_to_admin_id";
-  $change_to_admin_query = mysqli_query($connection, $query);
-  confirmQuery($change_to_admin_query);
-  header('Location: users.php');
+    $query = "UPDATE users SET user_role = 'Admin' WHERE user_id = $change_to_admin_id";
+    $change_to_admin_query = mysqli_query($connection, $query);
+    confirmQuery($change_to_admin_query);
+    header('Location: users.php');
+    exit;
+  }
+  header("Location: ../index.php");
   exit;
 }
 
 if(isset($_GET['change_to_sub'])){
-  $change_to_sub_id = $_GET['change_to_sub'];
+  if(isset($_SESSION['user_role']) && $_SESSION['user_role'] === "Admin"){
+    $change_to_sub_id = esc($_GET['change_to_sub']);
 
-  $query = "UPDATE users SET user_role = 'Subscriber' WHERE user_id = $change_to_sub_id";
-  $change_to_sub_query = mysqli_query($connection, $query);
-  confirmQuery($change_to_sub_query);
-  header('Location: users.php');
+    $query = "UPDATE users SET user_role = 'Subscriber' WHERE user_id = $change_to_sub_id";
+    $change_to_sub_query = mysqli_query($connection, $query);
+    confirmQuery($change_to_sub_query);
+    header('Location: users.php');
+    exit;
+  }
+  header("Location: ../index.php");
   exit;
 }
 

@@ -16,7 +16,7 @@
             <div class="col-md-8">
 <?php
 if(isset($_GET['p_id'])){
-    $post_id = $_GET['p_id'];
+    $post_id = esc($_GET['p_id']);
 } else {
     header("Location: index.php");
 }
@@ -61,10 +61,10 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
                 <!-- Blog Comments -->
 <?php
     if(isset($_POST['create_comment'])){
-        $comment_post_id = $_GET['p_id'];
-        $comment_author = $_POST['comment_author'];
-        $comment_email = $_POST['comment_email'];
-        $comment_content = $_POST['comment_content'];
+        $comment_post_id = esc($_GET['p_id']);
+        $comment_author = esc($_POST['comment_author']);
+        $comment_email = esc($_POST['comment_email']);
+        $comment_content = esc($_POST['comment_content']);
 
         if(!empty($comment_author) && !empty($comment_email) && !empty($comment_content)) {
             $query = "INSERT INTO comments (comment_post_id, comment_author, comment_email, comment_content, comment_status, comment_date) ";

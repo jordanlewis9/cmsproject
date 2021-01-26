@@ -25,7 +25,7 @@
 
   if(isset($_POST['checkBoxArray'])){
     foreach($_POST['checkBoxArray'] as $postValueId){
-      $bulk_options = $_POST['bulk_options'];
+      $bulk_options = esc($_POST['bulk_options']);
       switch($bulk_options){
         case 'Published':
           $query = "UPDATE posts SET post_status = '{$bulk_options}' WHERE post_id = $postValueId";
@@ -52,8 +52,8 @@
   }
 
   if(isset($_GET['post_status'])){
-    $status = $_GET['post_status'];
-    $new_post_id = $_GET['new_post_id'];
+    $status = esc($_GET['post_status']);
+    $new_post_id = esc($_GET['new_post_id']);
     if ($status === 'Published'){
       echo "<p class='bg-success'>Post published successfully! <a href='../post.php?p_id={$new_post_id}'>View here</a></p>";
     } else {
@@ -108,6 +108,7 @@
   while($row = mysqli_fetch_assoc($all_posts)){
     $post_id = $row['post_id'];
     $post_author = $row['post_author'];
+    $post_user = $row['post_user'];
     $post_title = $row['post_title'];
     $post_category_id = $row['post_category_id'];
     $post_status = $row['post_status'];
@@ -122,9 +123,19 @@
 
     echo "<tr>
           <td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value={$post_id}></td>
-          <td>{$post_id}</td>
-          <td>{$post_author}</td>
-          <td><a href='../post.php?p_id={$post_id}'>{$post_title}</a></td>";
+          <td>{$post_id}</td>";
+
+    if (!empty($post_author)){
+      echo "<td>{$post_author}</td>";
+    } else {
+      $user_query = "SELECT username FROM users WHERE user_id = {$post_user}";
+      $get_username = mysqli_query($connection, $user_query);
+      confirmQuery($get_username);
+      $post_user = mysqli_fetch_array($get_username)['username'];
+      echo "<td>{$post_user}</td>";
+    }
+    
+    echo "<td><a href='../post.php?p_id={$post_id}'>{$post_title}</a></td>";
     $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
     $category_title = mysqli_query($connection, $query);
     while($name_title = mysqli_fetch_assoc($category_title)){
@@ -148,7 +159,7 @@
 <?php
 
 if(isset($_GET['delete'])){
-  $delete_post_id = $_GET['delete'];
+  $delete_post_id = esc($_GET['delete']);
 
   $query = "DELETE FROM posts WHERE post_id = {$delete_post_id}";
   $delete_query = mysqli_query($connection, $query);

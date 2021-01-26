@@ -1,11 +1,11 @@
 <?php
   if(isset($_POST['create_user'])){
-    $username = $_POST['username'];
-    $user_role = $_POST['user_role'];
-    $user_firstname = $_POST['user_firstname'];
-    $user_lastname = $_POST['user_lastname'];
-    $user_email = $_POST['user_email'];
-    $user_password = $_POST['user_password'];
+    $username = esc($_POST['username']);
+    $user_role = esc($_POST['user_role']);
+    $user_firstname = esc($_POST['user_firstname']);
+    $user_lastname = esc($_POST['user_lastname']);
+    $user_email = esc($_POST['user_email']);
+    $user_password = esc($_POST['user_password']);
 
     // move_uploaded_file($post_image_temp, "../images/$post_image");
 

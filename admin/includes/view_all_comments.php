@@ -16,7 +16,7 @@
                       <tbody>
 <?php 
   if(isset($_GET['id']) && !empty($_GET['id'])){
-    $id = mysqli_real_escape_string($connection, $_GET['id']);
+    $id = esc($_GET['id']);
     $query = "SELECT * FROM comments WHERE comment_post_id = {$id} ORDER BY comment_date DESC";
     $all_comments = mysqli_query($connection, $query);
     confirmQuery($all_comments);
@@ -71,7 +71,7 @@
 <?php
 
 if(isset($_GET['delete'])){
-  $delete_comment_id = $_GET['delete'];
+  $delete_comment_id = esc($_GET['delete']);
   // $id = $_GET['id'] ?? '';
 
   $query = "DELETE FROM comments WHERE comment_id = {$delete_comment_id}";
@@ -83,7 +83,7 @@ if(isset($_GET['delete'])){
 }
 
 if(isset($_GET['unapprove'])){
-  $unapprove_comment_id = $_GET['unapprove'];
+  $unapprove_comment_id = esc($_GET['unapprove']);
   // $id = $_GET['id'] ?? '';
 
   $query = "UPDATE comments SET comment_status = 'Unapproved' WHERE comment_id = $unapprove_comment_id";
@@ -94,7 +94,7 @@ if(isset($_GET['unapprove'])){
 }
 
 if(isset($_GET['approve'])){
-  $approve_comment_id = $_GET['approve'];
+  $approve_comment_id = esc($_GET['approve']);
   // $id = $_GET['id'] ?? '';
 
   $query = "UPDATE comments SET comment_status = 'Approved' WHERE comment_id = $approve_comment_id";

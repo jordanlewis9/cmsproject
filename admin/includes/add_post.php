@@ -1,22 +1,34 @@
 <?php
   if(isset($_POST['create_post'])){
-    $post_title = $_POST['title'];
-    $post_author = $_POST['author'];
-    $post_category_id = $_POST['post_category_id'];
-    $post_status = $_POST['post_status'];
+    $post_title = esc($_POST['title']);
+    // $post_author = $_POST['author'];
+    $post_user = esc($_POST['user']);
+    $post_category_id = esc($_POST['post_category_id']);
+    $post_status = esc($_POST['post_status']);
 
-    $post_image = $_FILES['image']['name'];
-    $post_image_temp = $_FILES['image']['tmp_name'];
+    $post_image = esc($_FILES['image']['name']);
+    $post_image_temp = esc($_FILES['image']['tmp_name']);
 
-    $post_tags = $_POST['post_tags'];
-    $post_content = $_POST['post_content'];
+    $post_tags = esc($_POST['post_tags']);
+    $post_content = esc($_POST['post_content']);
     $post_date = date('d-m-y');
 
     move_uploaded_file($post_image_temp, "../images/$post_image");
 
-    $query = "INSERT INTO posts (post_category_id, post_title, post_author, post_date, post_image, post_content, 
-    post_tags, post_status) VALUES ({$post_category_id}, '{$post_title}', '{$post_author}', 
-    now(), '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
+    if ($post_status === "Published") {
+      $author_query = "SELECT username FROM users WHERE user_id = {$post_user}";
+      $get_author = mysqli_query($connection, $author_query);
+      confirmQuery($get_author);
+      $post_author_id = $post_user;
+      $post_author = mysqli_fetch_assoc($get_author)['username'];
+      $query = "INSERT INTO posts (post_category_id, post_title, post_user, post_date, post_image, post_content, 
+      post_tags, post_status, post_author, post_author_id) VALUES ({$post_category_id}, '{$post_title}', '{$post_user}', 
+      now(), '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}', '{$post_author}', {$post_author_id})";
+    } else {
+      $query = "INSERT INTO posts (post_category_id, post_title, post_user, post_date, post_image, post_content, 
+      post_tags, post_status) VALUES ({$post_category_id}, '{$post_title}', '{$post_user}', 
+      now(), '{$post_image}', '{$post_content}', '{$post_tags}', '{$post_status}')";
+    }
 
     $create_post_query = mysqli_query($connection, $query);
 
@@ -37,7 +49,7 @@
     <input type="text" class="form-control" name="title">
   </div>
   <div class="form-group">
-    <label for="post_category_id">Post Category Id</label>
+    <label for="post_category_id">Category</label>
     <select name="post_category_id">
 <?php 
   $query = "SELECT * FROM categories";
@@ -52,9 +64,25 @@
 ?>
     </select>
   </div>
-  <div class="form-group">
+  <!-- <div class="form-group">
     <label for="author">Post Author</label>
     <input type="text" class="form-control" name="author">
+  </div> -->
+  <div class="form-group">
+  <label for="user">Users</label>
+  <select name="user" id="">
+<?php
+  $query = "SELECT * FROM users";
+  $all_users = mysqli_query($connection, $query);
+
+  confirmQuery($all_users);
+  while($row = mysqli_fetch_assoc($all_users)){
+    $user_id = $row['user_id'];
+    $username = $row['username'];
+    echo "<option value={$user_id}>{$username}</option>";
+  }
+?>
+  </select>
   </div>
   <div class="form-group">
     <label for="post_status">Post Status</label>

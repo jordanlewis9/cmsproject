@@ -1,6 +1,5 @@
 <?php 
     include "includes/header.php";
-    include "includes/db.php";
 ?>
 
     <!-- Navigation -->
@@ -16,7 +15,7 @@
             <div class="col-md-8">
 <?php
 if(isset($_GET['author'])){
-    $author_id = $_GET['author'];
+    $author_id = esc($_GET['author']);
 }
 $query = "SELECT * FROM posts WHERE post_author_id = {$author_id} ORDER BY post_date DESC";
 $select_all_posts_query = mysqli_query($connection, $query);

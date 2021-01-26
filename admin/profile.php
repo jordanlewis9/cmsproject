@@ -17,11 +17,11 @@
   }
 
     if(isset($_POST['update_self'])){
-      $edit_username = $_POST['username'];
-      $edit_user_firstname = $_POST['user_firstname'];
-      $edit_user_lastname = $_POST['user_lastname'];
-      $edit_user_email = $_POST['user_email'];
-      $edit_user_password = $_POST['user_password'];
+      $edit_username = esc($_POST['username']);
+      $edit_user_firstname = esc($_POST['user_firstname']);
+      $edit_user_lastname = esc($_POST['user_lastname']);
+      $edit_user_email = esc($_POST['user_email']);
+      $edit_user_password = esc($_POST['user_password']);
 
       if(empty($edit_user_password)){
         $edit_user_password = $user_password;

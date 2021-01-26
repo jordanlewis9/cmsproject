@@ -33,7 +33,7 @@ while($row = mysqli_fetch_assoc($select_all_categories_query)){
     if(isset($_SESSION['user_role'])){
         $role = $_SESSION['user_role'];
         if(isset($_GET['p_id']) && $role === "Admin"){
-            $the_post_id = $_GET['p_id'];
+            $the_post_id = esc($_GET['p_id']);
             echo "<li><a href='admin/posts.php?source=edit_post&p_id={$the_post_id}'>Edit Post</a></li>";
         }
     }

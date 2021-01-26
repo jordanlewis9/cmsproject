@@ -144,6 +144,8 @@
     $query = "SELECT post_status, COUNT(post_status) AS num_posts FROM posts GROUP BY post_status";
     $select_all_draft_posts = mysqli_query($connection, $query);
     confirmQuery($select_all_draft_posts);
+    $published_count = 0;
+    $draft_count = 0;
     while($row = mysqli_fetch_assoc($select_all_draft_posts)){
         if($row['post_status'] === 'Published'){
             $published_count  = $row['num_posts'];
@@ -155,6 +157,8 @@
     $query = "SELECT comment_status, COUNT(comment_status) AS num_comments FROM comments GROUP BY comment_status";
     $all_comments_query = mysqli_query($connection, $query);
     confirmQuery($all_comments_query);
+    $approved_count = 0;
+    $unapproved_count = 0;
     while($row = mysqli_fetch_assoc($all_comments_query)){
         if($row['comment_status'] === 'Approved'){
             $approved_count  = $row['num_comments'];
@@ -166,6 +170,8 @@
     $query = "SELECT user_role, COUNT(user_role) AS num_users FROM users GROUP BY user_role";
     $user_role_query = mysqli_query($connection, $query);
     confirmQuery($user_role_query);
+    $admin_count = 0;
+    $sub_count = 0;
     while($row = mysqli_fetch_assoc($user_role_query)){
         if($row['user_role'] === 'Admin'){
             $admin_count  = $row['num_users'];
@@ -179,7 +185,6 @@
                 <script type="text/javascript">
       google.charts.load('current', {'packages':['bar']});
       google.charts.setOnLoadCallback(drawChart);
-
       function drawChart() {
         var data = google.visualization.arrayToDataTable([
           ['Data', 'Count'],

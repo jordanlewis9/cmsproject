@@ -1,6 +1,5 @@
 <?php 
     include "includes/header.php";
-    include "includes/db.php";
 ?>
 
     <!-- Navigation -->
@@ -12,12 +11,12 @@
 <?php
 
     if(isset($_GET['signed_up'])){
-        $message = $_GET['signed_up'];
+        $message = esc($_GET['signed_up']);
         echo "<p class='bg-success'>$message</p>";
     }
 
     if(isset($_GET['signed_in'])){
-        $message = $_GET['signed_in'];
+        $message = esc($_GET['signed_in']);
         echo "<p class=bg-success'>$message</p>";
     }
 ?>
@@ -34,7 +33,7 @@
 <?php
 
     if(isset($_POST['submit'])){
-        $_SESSION['posts_per_page'] = $_POST['posts_per_page'];
+        $_SESSION['posts_per_page'] = esc($_POST['posts_per_page']);
         header("Location: index.php?page=1");
         exit;
     }
@@ -44,7 +43,7 @@
     $num_posts = mysqli_num_rows($num_posts_query);
 
     if(isset($_GET['page']) && isset($_SESSION['posts_per_page'])) {
-        $page = $_GET['page'];
+        $page = esc($_GET['page']);
         $num_posts_per_page = $_SESSION['posts_per_page'];
         $start_index = $page * $num_posts_per_page - $num_posts_per_page;
         if($start_index > $num_posts){
@@ -52,7 +51,7 @@
             exit;
         }
     } else if(isset($_GET['page'])){
-        $page = $_GET['page'];
+        $page = esc($_GET['page']);
         $num_posts_per_page = 5;
         $start_index = $page * $num_posts_per_page - $num_posts_per_page;
         if($start_index > $num_posts){

@@ -3,6 +3,8 @@
 
 <head>
 <?php session_start(); ?>
+<?php include "db.php"; ?>
+<?php include "functions.php"; ?>
 
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">

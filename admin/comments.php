@@ -14,7 +14,7 @@
                     <h1 class="page-header">Welcome Admin <small>Author Name</small></h1>
 <?php
   if(isset($_GET['source'])){
-    $source = $_GET['source'];
+    $source = esc($_GET['source']);
   } else {
     $source = '';
   }
