@@ -18,7 +18,13 @@ $query = "SELECT * FROM categories";
 $select_all_categories_query = mysqli_query($connection, $query);
 while($row = mysqli_fetch_assoc($select_all_categories_query)){
     $cat_title = $row['cat_title'];
-    echo "<li><a href='#'>{$cat_title}</a></li>";
+    $cat_id = $row['cat_id'];
+    $active_class = $_GET['name'] ?? null;
+    if ($active_class === $cat_title){
+        echo "<li class='active'><a href='category.php?category=$cat_id&name=$cat_title'>{$cat_title}</a></li>";
+    } else {
+        echo "<li><a href='category.php?category=$cat_id&name=$cat_title'>{$cat_title}</a></li>";
+    }
 }
 
 
@@ -39,6 +45,11 @@ while($row = mysqli_fetch_assoc($select_all_categories_query)){
             $the_post_id = esc($_GET['p_id']);
             echo "<li><a href='admin/posts.php?source=edit_post&p_id={$the_post_id}'>Edit Post</a></li>";
         }
+    }
+
+    if(isset($_SESSION['username'])) {
+        $user = $_SESSION['username'];
+        echo "<li><a href=''>Howdy, $user</a></li>";
     }
 ?>
                     <!--<li>

@@ -1,6 +1,5 @@
 <?php 
     include "includes/header.php";
-    include "includes/db.php";
 ?>
 
     <!-- Navigation -->
@@ -19,13 +18,21 @@ if(isset($_GET['p_id'])){
     $post_id = esc($_GET['p_id']);
 } else {
     header("Location: index.php");
+    exit;
 }
 
-$view_query = "UPDATE posts SET post_views_count = post_views_count + 1 WHERE post_id = $post_id";
-$updated_views = mysqli_query($connection, $view_query);
+if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
+    $user_role = $_SESSION['user_role'];
+    $query = "SELECT * FROM posts WHERE post_id = {$post_id}";
+} else {
+    $query = "SELECT * FROM posts WHERE post_id = {$post_id} AND post_status = 'Published'";
+}
 
-if(!$updated_views){
-    die('QUERY FAILED WITH UPDATING VIEWS' . mysqli_error($connection));
+$select_all_posts_query = mysqli_query($connection, $query);
+
+if (mysqli_num_rows($select_all_posts_query) === 0) {
+    header("Location: index.php");
+    exit;
 }
 
 $query = "SELECT * FROM posts WHERE post_id = {$post_id}";
@@ -36,12 +43,9 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
     $post_date = $row['post_date'];
     $post_image = $row['post_image'];
     $post_content = $row['post_content'];
+    $post_status = $row['post_status'];
 
 ?>
-                <h1 class="page-header">
-                    Page Heading
-                    <small>Secondary Text</small>
-                </h1>
 
                 <!-- First Blog Post -->
                 <h2>
@@ -50,6 +54,11 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
                 <p class="lead">
                     by <a href="index.php"><?php echo $post_author; ?></a>
                 </p>
+<?php 
+    if(!empty($user_role)) {
+        echo "<h4>$post_status</h4><hr>";
+    }
+?>
                 <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $post_date; ?></p>
                 <hr>
                 <img class="img-responsive" src="./images/<?php echo $post_image; ?>" alt="">
@@ -57,6 +66,15 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
                 <p><?php echo $post_content; ?></p>
                 <hr>
 <?php } ?>
+
+<?php 
+$view_query = "UPDATE posts SET post_views_count = post_views_count + 1 WHERE post_id = $post_id";
+$updated_views = mysqli_query($connection, $view_query);
+
+if(!$updated_views){
+    die('QUERY FAILED WITH UPDATING VIEWS' . mysqli_error($connection));
+}
+?>
 
                 <!-- Blog Comments -->
 <?php

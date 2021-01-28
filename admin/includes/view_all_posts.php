@@ -1,4 +1,6 @@
 <?php
+
+include("delete_modal.php");
   function clonePost($id) {
     global $connection;
 
@@ -149,7 +151,7 @@
           <td>{$post_date}</td>
           <td>{$post_views}</td>
           <td><a href='posts.php?source=edit_post&p_id={$post_id}'>Edit</a></td>
-          <td><a onClick='javascript: return confirm(\"Are you sure you want to delete this item?\")' href='posts.php?delete={$post_id}'>Delete</a></td>
+          <td><a href='' data-id='$post_id' data-toggle='modal' data-target='#myModal' data-title='$post_title' class='delete_link'>Delete</a></td>
           </tr>";
   }
 ?>
@@ -170,3 +172,14 @@ if(isset($_GET['delete'])){
 }
 
 ?>
+<script>
+$(document).ready(function() {
+  $(".delete_link").on("click", function() {
+    var id = $(this).data("id");
+    var title = $(this).data("title");
+    var delete_url = `posts.php?delete=${id}`;
+    $(".modal_delete_link").attr("href", delete_url);
+    $(".modal-title").text(`Delete ${title}`);
+  })
+});
+</script>

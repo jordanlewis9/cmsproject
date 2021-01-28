@@ -38,7 +38,15 @@
         exit;
     }
 
-    $query = "SELECT * FROM posts WHERE post_status = 'Published'";
+    if(isset($_SESSION['user_role'])){
+        $user_role = $_SESSION['user_role'];
+    }
+
+    if(!empty($user_role) && $user_role === 'Admin') {
+        $query = "SELECT * FROM posts";
+    } else {
+        $query = "SELECT * FROM posts WHERE post_status = 'Published'";
+    }
     $num_posts_query = mysqli_query($connection, $query);
     $num_posts = mysqli_num_rows($num_posts_query);
 
@@ -72,8 +80,11 @@
         $start_index = $page * $num_posts_per_page - $num_posts_per_page;
     }
 
-
-$query = "SELECT * FROM posts WHERE post_status = 'Published' ORDER BY post_id DESC LIMIT {$start_index}, {$num_posts_per_page}";
+    if(!empty($user_role) && $user_role === 'Admin') {
+        $query = "SELECT * FROM posts ORDER BY post_id DESC LIMIT {$start_index}, {$num_posts_per_page}";
+    } else {
+        $query = "SELECT * FROM posts WHERE post_status = 'Published' ORDER BY post_id DESC LIMIT {$start_index}, {$num_posts_per_page}";
+    }
 $select_all_posts_query = mysqli_query($connection, $query);
 if(mysqli_num_rows($select_all_posts_query) === 0){
     echo "<h1 class='text-center'>Sorry, no posts are published yet!</h1>";
@@ -101,6 +112,11 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
                 </p>
                 <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $post_date; ?></p>
                 <hr>
+<?php 
+    if(!empty($user_role) && $user_role === 'Admin') {
+        echo "<h4>$post_status</h4><hr>";
+    }
+?>
                 <a href="post.php?p_id=<?php echo $post_id; ?>"><img class="img-responsive" src="./images/<?php echo $post_image; ?>" alt=""></a>
                 <hr>
                 <p><?php echo $post_content; ?></p>
@@ -118,9 +134,13 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
         </div>
         <!-- /.row -->
         <div>
-        <form action="" method="POST">
-            <label for="posts_per_page">Posts Per Page</label>
+
             <?php 
+            if ($num_posts === 0) {
+                echo '';
+            } else {
+                echo "<form action='' method='POST'>
+                <label for='posts_per_page'>Posts Per Page</label>";
                 if (isset($_SESSION['posts_per_page'])){
                     $posts_per_page = $_SESSION['posts_per_page'];
                     echo "<select name='posts_per_page'>
@@ -137,9 +157,11 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
                     <option value='25'>25</option>
                 </select>";
                 }
+                echo "                <button name='submit'>Submit</button>
+                </form>";
+            }
                 ?>
-                <button name="submit">Submit</button>
-        </form>
+
 <?php 
     if($page > 1){
         $back_page = $page - 1;
