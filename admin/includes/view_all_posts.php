@@ -105,14 +105,14 @@ include("delete_modal.php");
                       </thead>
                       <tbody>
 <?php 
-  $query = "SELECT * FROM posts ORDER BY post_id DESC";
+  $query = "SELECT * FROM posts INNER JOIN categories ON posts.post_category_id = categories.cat_id ORDER BY post_id DESC";
   $all_posts = mysqli_query($connection, $query);
   while($row = mysqli_fetch_assoc($all_posts)){
     $post_id = $row['post_id'];
     $post_author = $row['post_author'];
     $post_user = $row['post_user'];
     $post_title = $row['post_title'];
-    $post_category_id = $row['post_category_id'];
+    $post_category_title = $row['cat_title'];
     $post_status = $row['post_status'];
     $post_image = $row['post_image'];
     $post_tags = $row['post_tags'];
@@ -138,12 +138,7 @@ include("delete_modal.php");
     }
     
     echo "<td><a href='../post.php?p_id={$post_id}'>{$post_title}</a></td>";
-    $query = "SELECT * FROM categories WHERE cat_id = {$post_category_id}";
-    $category_title = mysqli_query($connection, $query);
-    while($name_title = mysqli_fetch_assoc($category_title)){
-      $cat_title = $name_title['cat_title'];
-      echo "<td>{$cat_title}</td>";
-    }
+    echo "<td>{$post_category_title}</td>";
     echo "<td>{$post_status}</td>
           <td><img width=100 src='../images/{$post_image}' alt='Blog image preview'></td>
           <td>{$post_tags}</td>

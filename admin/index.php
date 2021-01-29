@@ -30,155 +30,42 @@
                 
 <?php
     // POSTS QUERY
-    $query = "SELECT * FROM posts";
-    $select_all_posts = mysqli_query($connection, $query);
-    $post_count = mysqli_num_rows($select_all_posts);
+    $post_count = get_table_count('posts');
 
     // COMMENTS QUERY
-    $query = "SELECT * FROM comments";
-    $select_all_comments = mysqli_query($connection, $query);
-    $comment_count = mysqli_num_rows($select_all_comments);
+    $comment_count = get_table_count('comments');
 
     // USERS QUERY
-    $query = "SELECT * FROM users";
-    $select_all_users = mysqli_query($connection, $query);
-    $users_count = mysqli_num_rows($select_all_users);
+    $users_count = get_table_count('users');
 
     // CATEGORIES QUERY
-    $query = "SELECT * FROM categories";
-    $select_all_categories = mysqli_query($connection, $query);
-    $categories_count = mysqli_num_rows($select_all_categories);
+    $categories_count = get_table_count('categories');
 
 ?>
 <div class="row">
-    <div class="col-lg-3 col-md-6">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-file-text fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                  <div class='huge'><?php echo $post_count; ?></div>
-                        <div>Posts</div>
-                    </div>
-                </div>
-            </div>
-            <a href="posts.php">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
-        <div class="panel panel-green">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-comments fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                     <div class='huge'><?php echo $comment_count; ?></div>
-                      <div>Comments</div>
-                    </div>
-                </div>
-            </div>
-            <a href="comments.php">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
-        <div class="panel panel-yellow">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-user fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                    <div class='huge'><?php echo $users_count; ?></div>
-                        <div> Users</div>
-                    </div>
-                </div>
-            </div>
-            <a href="users.php">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <div class="row">
-                    <div class="col-xs-3">
-                        <i class="fa fa-list fa-5x"></i>
-                    </div>
-                    <div class="col-xs-9 text-right">
-                        <div class='huge'><?php echo $categories_count; ?></div>
-                         <div>Categories</div>
-                    </div>
-                </div>
-            </div>
-            <a href="categories.php">
-                <div class="panel-footer">
-                    <span class="pull-left">View Details</span>
-                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                    <div class="clearfix"></div>
-                </div>
-            </a>
-        </div>
-    </div>
+<?php
+
+$widgets = [['posts', $post_count, 'yellow'], ['comments', $comment_count, 'primary'], ['users', $users_count, 'green'], ['categories', $categories_count, 'danger']];
+foreach ($widgets as $widget) {
+    echo_stat_widgets($widget[0], $widget[1], $widget[2]);
+}
+?>
 </div>
 <?php
-    $query = "SELECT post_status, COUNT(post_status) AS num_posts FROM posts GROUP BY post_status";
-    $select_all_draft_posts = mysqli_query($connection, $query);
-    confirmQuery($select_all_draft_posts);
-    $published_count = 0;
-    $draft_count = 0;
-    while($row = mysqli_fetch_assoc($select_all_draft_posts)){
-        if($row['post_status'] === 'Published'){
-            $published_count  = $row['num_posts'];
-        } else {
-            $draft_count = $row['num_posts'];
-        }
-    }
+    $posts = get_precise_stats('posts', 'post_status', 'Published', 'Draft');
+    $published_count = $posts[0];
+    $draft_count = $posts[1];
 
-    $query = "SELECT comment_status, COUNT(comment_status) AS num_comments FROM comments GROUP BY comment_status";
-    $all_comments_query = mysqli_query($connection, $query);
-    confirmQuery($all_comments_query);
-    $approved_count = 0;
-    $unapproved_count = 0;
-    while($row = mysqli_fetch_assoc($all_comments_query)){
-        if($row['comment_status'] === 'Approved'){
-            $approved_count  = $row['num_comments'];
-        } else {
-            $unapproved_count = $row['num_comments'];
-        }
-    }
 
-    $query = "SELECT user_role, COUNT(user_role) AS num_users FROM users GROUP BY user_role";
-    $user_role_query = mysqli_query($connection, $query);
-    confirmQuery($user_role_query);
-    $admin_count = 0;
-    $sub_count = 0;
-    while($row = mysqli_fetch_assoc($user_role_query)){
-        if($row['user_role'] === 'Admin'){
-            $admin_count  = $row['num_users'];
-        } else {
-            $sub_count = $row['num_users'];
-        }
-    }
+    $comments = get_precise_stats('comments', 'comment_status', 'Approved', 'Unapproved');
+    $approved_count = $comments[0];
+    $unapproved_count = $comments[1];
+
+
+    $users = get_precise_stats('users', 'user_role', 'Admin', 'Subscriber');
+    $admin_count = $users[0];
+    $sub_count = $users[1];
+
 ?>
                 <!-- /.row -->
                 <div class="row">
