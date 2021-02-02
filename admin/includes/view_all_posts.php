@@ -145,8 +145,11 @@ include("delete_modal.php");
           <td><a href='comments.php?id={$post_id}'>{$post_comment_count}</a></td>
           <td>{$post_date}</td>
           <td>{$post_views}</td>
-          <td><a href='posts.php?source=edit_post&p_id={$post_id}'>Edit</a></td>
-          <td><a href='' data-id='$post_id' data-toggle='modal' data-target='#myModal' data-title='$post_title' class='delete_link'>Delete</a></td>
+          <td><a class='btn btn-info' href='posts.php?source=edit_post&p_id={$post_id}'>Edit</a></td>
+          <form method='POST'>
+            <input type='hidden' name='post_id' value='{$post_id}'>
+            <td><input class='btn btn-danger' type='submit' name='delete' value='Delete'></td>
+          </form>
           </tr>";
   }
 ?>
@@ -155,8 +158,8 @@ include("delete_modal.php");
 </form>
 <?php
 
-if(isset($_GET['delete'])){
-  $delete_post_id = esc($_GET['delete']);
+if(isset($_POST['delete'])){
+  $delete_post_id = $_POST['post_id'];
 
   $query = "DELETE FROM posts WHERE post_id = {$delete_post_id}";
   $delete_query = mysqli_query($connection, $query);

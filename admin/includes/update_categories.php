@@ -17,9 +17,10 @@
 <?php
   if(isset($_POST['update'])){
     $edit_cat_title = esc($_POST['cat_title']);
-    $query = "UPDATE categories SET cat_title = '{$edit_cat_title}' WHERE cat_id = {$edit_cat_id}";
-    $update_query = mysqli_query($connection, $query);
-    if(!$update_query){
+    $stmt = mysqli_prepare($connection, "UPDATE categories SET cat_title = ? WHERE cat_id = ?");
+    mysqli_stmt_bind_param($stmt, "si", $edit_cat_title, $edit_cat_id);
+    mysqli_stmt_execute($stmt);
+    if(!$stmt){
       die('QUERY FAILED ' . mysqli_error($connection));
     } else {
       header('Location: categories.php');
