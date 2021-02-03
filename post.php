@@ -17,7 +17,7 @@
 if(isset($_GET['p_id'])){
     $post_id = esc($_GET['p_id']);
 } else {
-    header("Location: index.php");
+    header("Location: ../index");
     exit;
 }
 
@@ -31,7 +31,7 @@ if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
 $select_all_posts_query = mysqli_query($connection, $query);
 
 if (mysqli_num_rows($select_all_posts_query) === 0) {
-    header("Location: index.php");
+    header("Location: ../index");
     exit;
 }
 
@@ -52,7 +52,7 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
                     <a href="#"><?php echo $post_title; ?></a>
                 </h2>
                 <p class="lead">
-                    by <a href="index.php"><?php echo $post_author; ?></a>
+                    by <a href="../index"><?php echo $post_author; ?></a>
                 </p>
 <?php 
     if(!empty($user_role)) {
@@ -61,7 +61,7 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
 ?>
                 <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $post_date; ?></p>
                 <hr>
-                <img class="img-responsive" src="./images/<?php echo $post_image; ?>" alt="">
+                <img class="img-responsive" src="/cmsproject/images/<?php echo $post_image; ?>" alt="">
                 <hr>
                 <p><?php echo $post_content; ?></p>
                 <hr>

@@ -15,21 +15,19 @@
             <div class="col-md-8">
 
 <?php
-if(isset($_GET['category']) && isset($_GET['name'])){
+if(isset($_GET['category'])){
   $post_category_id = esc($_GET['category']);
-  $category_name = esc($_GET['name']);
 } else {
     header("Location: index.php");
     exit;
 }
-echo "<h1 class='page-header'>$category_name</h1>";
 if(is_admin($_SESSION['username'])){
     $user_role = $_SESSION['user_role'];
     // $query = "SELECT  FROM posts WHERE post_category_id = {$post_category_id} ORDER BY post_date DESC";
 
-    $stmt1 = mysqli_prepare($connection, "SELECT post_id, post_title, post_author, post_date, post_image, post_content, post_status FROM posts WHERE post_category_id = ? ORDER BY post_date DESC");
+    $stmt1 = mysqli_prepare($connection, "SELECT post_id, post_title, post_author, post_date, post_image, post_content, post_status, cat_title FROM posts INNER JOIN categories ON post_category_id = cat_id WHERE post_category_id = ? ORDER BY post_date DESC");
 } else {
-    $stmt2 = mysqli_prepare($connection, "SELECT post_id, post_title, post_author, post_date, post_image, post_content, post_status FROM posts WHERE post_category_id = ? AND post_status = ? ORDER BY post_date DESC");
+    $stmt2 = mysqli_prepare($connection, "SELECT post_id, post_title, post_author, post_date, post_image, post_content, post_status, cat_title FROM posts INNER JOIN categories ON post_category_id = cat_id WHERE post_category_id = ? AND post_status = ? ORDER BY post_date DESC");
     $published = 'Published';
     // $query = "SELECT post_id, post_title, post_author, post_date, post_image, post_content, post_status FROM posts WHERE post_category_id = {$post_category_id} AND post_status = 'Published' ORDER BY post_date DESC";
 }
@@ -37,15 +35,16 @@ if(is_admin($_SESSION['username'])){
 if(isset($stmt1)){
     mysqli_stmt_bind_param($stmt1, "i", $post_category_id);
     mysqli_stmt_execute($stmt1);
-    mysqli_stmt_bind_result($stmt1, $post_id, $post_title, $post_author, $post_date, $post_image, $post_content, $post_status);
+    mysqli_stmt_bind_result($stmt1, $post_id, $post_title, $post_author, $post_date, $post_image, $post_content, $post_status, $post_category);
     $stmt = $stmt1;
 } else {
     mysqli_stmt_bind_param($stmt2, "is", $post_category_id, $published);
     mysqli_stmt_execute($stmt2);
-    mysqli_stmt_bind_result($stmt2, $post_id, $post_title, $post_author, $post_date, $post_image, $post_content, $post_status);
+    mysqli_stmt_bind_result($stmt2, $post_id, $post_title, $post_author, $post_date, $post_image, $post_content, $post_status, $post_category);
     $stmt = $stmt2;
 }
 mysqli_stmt_store_result($stmt);
+echo "<h1 class='page-header'>{$post_category}</h1>";
 if(mysqli_stmt_num_rows($stmt) === 0) {
     echo "<h1>Sorry, no posts are available under this category.</h1>";
 }
