@@ -8,7 +8,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="index.php">Home</a>
+                <a class="navbar-brand" href="/cmsproject/index">Home</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -21,9 +21,9 @@ while($row = mysqli_fetch_assoc($select_all_categories_query)){
     $cat_id = $row['cat_id'];
     $active_class = $_GET['name'] ?? null;
     if ($active_class === $cat_title){
-        echo "<li class='active'><a href='category.php?category=$cat_id&name=$cat_title'>{$cat_title}</a></li>";
+        echo "<li class='active'><a href='/cmsproject/category/$cat_id/$cat_title'>{$cat_title}</a></li>";
     } else {
-        echo "<li><a href='category.php?category=$cat_id&name=$cat_title'>{$cat_title}</a></li>";
+        echo "<li><a href='/cmsproject/category/$cat_id/$cat_title'>{$cat_title}</a></li>";
     }
 }
 
@@ -33,10 +33,10 @@ while($row = mysqli_fetch_assoc($select_all_categories_query)){
                         <a href='admin'>Admin</a>
                     </li>
                     <li>
-                        <a href='registration.php'>Register</a>
+                        <a href='/cmsproject/registration'>Register</a>
                     </li>
                     <li>
-                        <a href="contact.php">Contact</a>
+                        <a href="/cmsproject/contact">Contact</a>
                     </li>
 <?php
     if(isset($_SESSION['user_role'])){
