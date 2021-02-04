@@ -29,11 +29,12 @@ function confirmQuery($result) {
   function email_exists($email) {
     global $connection;
 
-    $query = "SELECT user_email FROM users WHERE user_email = '{$email}'";
-    $result = mysqli_query($connection, $query);
-    confirmQuery($result);
+    $stmt = mysqli_prepare($connection, "SELECT user_email FROM users WHERE user_email = ?");
+    mysqli_stmt_bind_param($stmt, "s", $email);
+    mysqli_stmt_execute($stmt);
+    mysqli_stmt_store_result($stmt);
 
-    if(mysqli_num_rows($result) > 0) {
+    if(mysqli_stmt_num_rows($stmt) > 0) {
       return true;
     } else {
       return false;
@@ -61,6 +62,8 @@ function confirmQuery($result) {
     $select_user_query = mysqli_query($connection, $query);
     if(!$select_user_query) {
       die('QUERY FAILED ' . mysqli_error($connection));
+    } else if (mysqli_num_rows($select_user_query) === 0) {
+      return false;
     }
   
     while($row = mysqli_fetch_assoc($select_user_query)){
@@ -79,7 +82,7 @@ function confirmQuery($result) {
       $_SESSION['user_role'] = $db_user_role;
       $_SESSION['user_id'] = $db_user_id;
       if ($db_user_role === 'Admin'){
-        header('Location: ../admin/index.php');
+        header('Location: /cmsproject/admin');
         exit;
       } else {
         $message = "Welcome, $db_username";
@@ -91,8 +94,7 @@ function confirmQuery($result) {
         exit;
       }
     } else {
-      $message = "Username or password do not match our records. Please try again.";
-      header("Location: ../index.php?signed_in=$message");
+      return false;
     }
   }
 
@@ -111,6 +113,33 @@ function confirmQuery($result) {
       return true;
     } else {
       return false;
+    }
+  }
+
+  function redirect($location){
+    header("Location: {$location}");
+    exit;
+  }
+
+  //Checks if the current method is equal to the server's request method IE GET, POST
+
+  function ifItIsMethod($method = null){
+    if($_SERVER['REQUEST_METHOD'] === strtoupper($method)){
+      return true;
+    }
+    return false;
+  }
+
+  function isLoggedIn() {
+    if(isset($_SESSION['user_role'])) {
+      return true;
+    }
+    return false;
+  }
+
+  function checkIfUserIsLoggedInAndRedirect($redirectLocation = null){
+    if(isLoggedIn()){
+      redirect($redirectLocation);
     }
   }
 

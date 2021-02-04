@@ -1,0 +1,12 @@
+{
+    "name": "ohsna/cmsproject",
+    "authors": [
+        {
+            "name": "Jordan",
+            "email": "jlewis2008@live.com"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.2"
+    }
+}
