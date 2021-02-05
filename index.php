@@ -102,7 +102,6 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
         if(strlen($post_content) > 100){
             $post_content = substr($post_content, 0, 100) . "...";
         }
-
 ?>
                 <!-- First Blog Post -->
                 <h2>

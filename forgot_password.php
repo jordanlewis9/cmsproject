@@ -1,7 +1,14 @@
+<?php
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+// Load Composer's autoloader
+require 'vendor/autoload.php'; ?>
 <?php  include "includes/header.php"; ?>
 
 <?php 
-  if(!ifItIsMethod('get') && !isset($_GET['forgot'])){
+  if(!isset($_GET['forgot'])){
     redirect('/cmsproject/index');
   }
   if(ifItIsMethod('post')){
@@ -17,6 +24,43 @@
         } else {
           echo "QUERY FAILED " . mysqli_error($connection);
         }
+
+        // Configure PHP mailer
+        $mail = new PHPMailer();
+        try {
+          //Server settings
+          // $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
+          $mail->isSMTP();                                            // Send using SMTP
+          $mail->Host       = Config::SMTP_HOST;                    // Set the SMTP server to send through
+          $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
+          $mail->Username   = Config::SMTP_USER;                     // SMTP username
+          $mail->Password   = Config::SMTP_PASSWORD;                               // SMTP password
+          $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+          $mail->Port       = Config::SMTP_PORT;                                   // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+          $mail->CharSet    = 'UTF-8';
+      
+          //Recipients
+          $mail->setFrom('ohsnapzbrah@live.com', 'Jordan');
+          $mail->addAddress($email);     // Add a recipient
+          $mail->addReplyTo('info@example.com', 'Information');
+          $mail->addCC('cc@example.com');
+          $mail->addBCC('bcc@example.com');
+      
+          // Attachments
+      
+          // Content
+          $mail->isHTML(true);                                  // Set email format to HTML
+          $mail->Subject = 'This is a test email';
+          $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+          $mail->Body    = "<p>Please click to reset your password
+          <a href='http://localhost/cmsproject/reset.php?email={$email}&token={$token}'>http://localhost/cmsproject/reset.php?email={$email}&token={$token}</a>
+          </p>";
+      
+          $mail->send();
+          $email_sent = true;
+      } catch (Exception $e) {
+          echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+      }
       }
     }
   }
@@ -33,7 +77,7 @@
                 <div class="panel panel-default">
                     <div class="panel-body">
                         <div class="text-center">
-
+<?php if(!isset($email_sent)): ?>
 
                                 <h3><i class="fa fa-lock fa-4x"></i></h3>
                                 <h2 class="text-center">Forgot Password?</h2>
@@ -59,7 +103,9 @@
                                     </form>
 
                                 </div><!-- Body-->
-
+<?php else: ?>
+  <h2>Please check your email.</h2>
+<?php endif; ?>
                         </div>
                     </div>
                 </div>
