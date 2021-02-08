@@ -1,11 +1,11 @@
 <?php
-    if(ifItIsMethod('post')){
+    if(ifItIsMethod('post') && isset($_POST['login'])){
         if(isset($_POST['username']) && isset($_POST['password'])){
             $username = esc($_POST['username']);
             $password = esc($_POST['password']);
-            login_user($username, $password);
-        } else {
-            redirect('/cmsproject/login');
+            if(!login_user($username, $password)){
+                redirect('/cmsproject/login');
+            }
         }
     }
 ?>

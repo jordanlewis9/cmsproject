@@ -4,15 +4,14 @@
   checkIfUserIsLoggedInAndRedirect('/cmsproject/index');
 
   if(ifItIsMethod('post')){
-    if(isset($_POST['username']) && isset($_POST['password'])){
+    if(isset($_POST['login']) && isset($_POST['password'])){
       $username = esc($_POST['username']);
       $password = esc($_POST['password']);
-    
-      login_user($username, $password);
-    } else {
-
-    }
-  }
+      if(!login_user($username, $password)){
+				echo "Login attempt failed. Please try again";
+			}
+  	}
+	}
 ?>
 
 
@@ -24,7 +23,6 @@
 
 <!-- Page Content -->
 <div class="container">
-
 	<div class="form-gap"></div>
 	<div class="container">
 		<div class="row">

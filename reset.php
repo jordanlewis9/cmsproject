@@ -21,9 +21,17 @@
     mysqli_stmt_close($stmt);
     if(isset($_POST['password']) && isset($_POST['password-confirm'])){
       $password = esc($_POST['password']);
-      $confirmPassword = esc($_POST['password-confirm']);
-      if($password !== $confirmPassword){
-        redirect("index");
+      $confirm_password = esc($_POST['password-confirm']);
+      if($password === $confirm_password){
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT, array('cost' => 12));
+        if($stmt = mysqli_prepare($connection, "UPDATE users SET token = '', user_password = ? WHERE user_email = ?")){
+          mysqli_stmt_bind_param($stmt, "ss", $hashedPassword, $user_email);
+          mysqli_stmt_execute($stmt);
+          mysqli_stmt_store_result($stmt);
+          if(mysqli_stmt_affected_rows($stmt) >= 1){
+            redirect("/cmsproject/login");
+          }
+        }
       }
     }
   } else {

@@ -143,5 +143,13 @@ function confirmQuery($result) {
     }
   }
 
+  function imagePlaceholder($image = '') {
+    if(!$image){
+      return 'surveyformpic.jpg';
+    } else {
+      return $image;
+    }
+  }
+
 
 ?>
