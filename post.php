@@ -21,6 +21,71 @@ if(isset($_GET['p_id'])){
     exit;
 }
 
+if(isset($_SESSION['user_id'])){
+    $current_user = $_SESSION['user_id'];
+} else {
+    $current_user = false;
+}
+
+if($current_user){
+    $check_user_like_query = "SELECT * FROM likes WHERE user_id = {$current_user} AND post_id = {$post_id}";
+    $run_check_user_like_query = mysqli_query($connection, $check_user_like_query);
+    confirmQuery($run_check_user_like_query);
+    $did_user_like = mysqli_num_rows($run_check_user_like_query);
+}
+
+
+if(isset($_POST['liked'])) {
+    if(!$current_user){
+        exit();
+    }
+    if($did_user_like >= 1){
+        exit();
+    } 
+    $like_post_id = $_POST['post_id'];
+    $like_user_id = $_POST['user_id'];
+    //1 SELECT POST
+    $search_post = "SELECT * FROM posts WHERE post_id = {$like_post_id}";
+    $post_result = mysqli_query($connection, $search_post);
+    confirmQuery($post_result);
+    $liked_post = mysqli_fetch_array($post_result);
+    $likes = $liked_post['likes'];
+
+    //2 UPDATE post with likes
+    $add_liked_post_query = "UPDATE posts SET likes = {$likes} + 1 WHERE post_id = {$like_post_id}";
+    $added_like_result = mysqli_query($connection, $add_liked_post_query);
+    confirmQuery($added_like_result);
+    //3 create likes for post
+    $place_into_likes_query = "INSERT INTO likes (user_id, post_id) VALUES ({$like_user_id}, {$like_post_id})";
+    $save_to_likes = mysqli_query($connection, $place_into_likes_query);
+    confirmQuery($save_to_likes);
+    redirect("/cmsproject/post/{$like_post_id}");
+}
+
+if(isset($_POST['unliked'])){
+    if(!$current_user){
+        exit();
+    }
+    if($did_user_like === 0){
+        exit();
+    }
+    $unlike_post_id = $_POST['post_id'];
+    $unlike_user_id = $_POST['user_id'];
+    $search_post = "SELECT * FROM posts WHERE post_id = {$unlike_post_id}";
+    $post_result = mysqli_query($connection, $search_post);
+    confirmQuery($post_result);
+    $unliked_post = mysqli_fetch_array($post_result);
+    $likes = $unliked_post['likes'];
+
+    $add_unliked_post_query = "UPDATE posts SET likes = {$likes} - 1 WHERE post_id = {$unlike_post_id}";
+    $added_unlike_result = mysqli_query($connection, $add_unliked_post_query);
+    confirmQuery($added_unlike_result);
+    $take_away_from_likes_query = "DELETE FROM likes WHERE user_id = {$unlike_user_id} AND post_id = {$unlike_post_id}";
+    $delete_from_likes = mysqli_query($connection, $take_away_from_likes_query);
+    confirmQuery($delete_from_likes);
+    redirect("/cmsproject/post/{$unlike_post_id}");
+}
+
 if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
     $user_role = $_SESSION['user_role'];
     $query = "SELECT * FROM posts WHERE post_id = {$post_id}";
@@ -44,7 +109,7 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
     $post_image = $row['post_image'];
     $post_content = $row['post_content'];
     $post_status = $row['post_status'];
-
+    $post_likes = $row['likes'];
 ?>
 
                 <!-- First Blog Post -->
@@ -65,6 +130,23 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
                 <hr>
                 <p><?php echo $post_content; ?></p>
                 <hr>
+<?php if(!$current_user): ?>
+                <div class="row">
+                    <p class="pull-right">You must be logged in to like this post. <a href="/cmsproject/login">Login here.</a></p>
+                </div>
+<?php elseif($did_user_like === 0): ?>
+                <div class="row">
+                    <p class="pull-right"><a href="" class="like"><span class="glyphicon glyphicon-thumbs-up"></span> Like</a></p>
+                </div>
+<?php else: ?>
+                <div class="row">
+                    <p class="pull-right"><a href="" class="unlike"><span class="glyphicon glyphicon-thumbs-down"></span> Unlike</a></p>
+                </div>
+<?php endif; ?>
+                <div class="row">
+                    <p class="pull-right">Like: <?php echo $post_likes; ?></p>
+                </div>
+                <div class="clearfix"></div>
 <?php } ?>
 
 <?php 
@@ -170,3 +252,32 @@ if(!$updated_views){
 <?php
     include "includes/footer.php";
 ?>
+
+<script>
+$(document).ready(function(){
+    var postId = <?php echo $post_id; ?>;
+    var userId = <?php echo $current_user; ?>;
+    $('.like').click(function(e){
+        $.ajax({
+            url: `/cmsproject/post.php?p_id=${postId}`,
+            type: 'post',
+            data: {
+                'liked': 1,
+                'post_id': postId,
+                'user_id': userId
+            }
+        })
+    })
+    $('.unlike').click(function(e){
+        $.ajax({
+            url: `/cmsproject/post.php?p_id=${postId}`,
+            type: 'post',
+            data: {
+                'unliked': 1,
+                'post_id': postId,
+                'user_id': userId
+            }
+        })
+    })
+})
+</script>
