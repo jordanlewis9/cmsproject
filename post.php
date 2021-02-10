@@ -136,11 +136,11 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
                 </div>
 <?php elseif($did_user_like === 0): ?>
                 <div class="row">
-                    <p class="pull-right"><a href="" class="like"><span class="glyphicon glyphicon-thumbs-up"></span> Like</a></p>
+                    <p class="pull-right"><a href="" class="like"><span class="glyphicon glyphicon-thumbs-up" data-toggle="tooltip" data-placement="top" title="Like it?"></span> Like</a></p>
                 </div>
 <?php else: ?>
                 <div class="row">
-                    <p class="pull-right"><a href="" class="unlike"><span class="glyphicon glyphicon-thumbs-down"></span> Unlike</a></p>
+                    <p class="pull-right"><a href="" class="unlike"><span class="glyphicon glyphicon-thumbs-down" data-toggle="tooltip" data-placement="top" title="You liked this previously"></span> Unlike</a></p>
                 </div>
 <?php endif; ?>
                 <div class="row">
@@ -255,6 +255,7 @@ if(!$updated_views){
 
 <script>
 $(document).ready(function(){
+    $('[data-toggle="tooltip"]').tooltip();
     var postId = <?php echo $post_id; ?>;
     var userId = <?php echo $current_user; ?>;
     $('.like').click(function(e){

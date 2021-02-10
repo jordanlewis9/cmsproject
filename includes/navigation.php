@@ -33,9 +33,16 @@ while($row = mysqli_fetch_assoc($select_all_categories_query)){
                     <li>
                         <a href='/cmsproject/login'>Login</a>
                     </li>
-<?php else: ?>
+<?php elseif ($_SESSION['user_role'] === 'Admin' || $_SESSION['user_role'] === 'Author'): ?>
                     <li>
                         <a href='admin'>Admin</a>
+                    </li>
+                    <li>
+                        <a href='includes/logout.php'>Logout</a>
+                    </li>
+<?php else: ?>
+                    <li>
+                        <a href='/cmsproject/admin/profile.php'>Edit Profile</a>
                     </li>
                     <li>
                         <a href='includes/logout.php'>Logout</a>

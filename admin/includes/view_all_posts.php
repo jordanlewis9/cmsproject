@@ -4,6 +4,9 @@ include("delete_modal.php");
   function clonePost($id) {
     global $connection;
 
+    if($current_user_role !== 'Admin'){
+      exit;
+    }
     $query = "SELECT * FROM posts WHERE post_id = $id";
     $cloned_post = mysqli_query($connection, $query);
     confirmQuery($cloned_post);
@@ -26,6 +29,9 @@ include("delete_modal.php");
 
 
   if(isset($_POST['checkBoxArray'])){
+    if($current_user_role !== 'Admin'){
+      exit;
+    }
     foreach($_POST['checkBoxArray'] as $postValueId){
       $bulk_options = esc($_POST['bulk_options']);
       switch($bulk_options){
@@ -71,6 +77,7 @@ include("delete_modal.php");
 
 <form action="" method="POST">
 
+<?php if($current_user_role === 'Admin'): ?>
 <div id="bulkOptionsContainer" class="col-xs-4">
     <select class="form-control" name="bulk_options" id="">
       <option value="">--Select Option--</option>
@@ -84,11 +91,14 @@ include("delete_modal.php");
     <input type="submit" name="submit" class="btn btn-success" value="Apply">
     <a class="btn btn-primary" href="posts.php?source=add_post">Add New</a>
   </div>
+<?php endif; ?>
 
 <table class="table table-bordered table-hover">
                       <thead>
                         <tr>
+<?php if($current_user_role === 'Admin'): ?>
                           <th><input id="selectAllBoxes" type="checkbox"></th>
+<?php endif; ?>
                           <th>Id</th>
                           <th>Author</th>
                           <th>Title</th>
@@ -105,7 +115,11 @@ include("delete_modal.php");
                       </thead>
                       <tbody>
 <?php 
-  $query = "SELECT * FROM posts INNER JOIN categories ON posts.post_category_id = categories.cat_id ORDER BY post_id DESC";
+  if($current_user_role === 'Admin'){
+    $query = "SELECT * FROM posts INNER JOIN categories ON posts.post_category_id = categories.cat_id ORDER BY post_id DESC";
+  } else {
+    $query = "SELECT * FROM posts INNER JOIN categories ON posts.post_category_id = categories.cat_id WHERE post_author_id = {$current_user_id} ORDER BY post_id DESC";
+  }
   $all_posts = mysqli_query($connection, $query);
   while($row = mysqli_fetch_assoc($all_posts)){
     $post_id = $row['post_id'];
@@ -123,9 +137,11 @@ include("delete_modal.php");
     $num_comments = mysqli_query($connection, $comment_query);
     $post_comment_count = mysqli_num_rows($num_comments);
 
-    echo "<tr>
-          <td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value={$post_id}></td>
-          <td>{$post_id}</td>";
+    echo "<tr>";
+    if($current_user_role === 'Admin'){
+      echo "<td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value={$post_id}></td>";
+    }
+    echo "<td>{$post_id}</td>";
 
     if (!empty($post_author)){
       echo "<td>{$post_author}</td>";
@@ -142,7 +158,13 @@ include("delete_modal.php");
     echo "<td>{$post_status}</td>
           <td><img width=100 src='../images/{$post_image}' alt='Blog image preview'></td>
           <td>{$post_tags}</td>
-          <td><a href='comments.php?id={$post_id}'>{$post_comment_count}</a></td>
+          <td>";
+    if($current_user_role === 'Admin'){
+      echo "<a href='comments.php?id={$post_id}'>{$post_comment_count}</a>";
+    } else {
+      echo "{$post_comment_count}";
+    }
+    echo "</td>
           <td>{$post_date}</td>
           <td>{$post_views}</td>
           <td><a class='btn btn-info' href='posts.php?source=edit_post&p_id={$post_id}'>Edit</a></td>

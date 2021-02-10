@@ -7,6 +7,11 @@ function confirmQuery($result) {
   }
 }
 
+function redirect($redirect_location) {
+  header("Location: {$redirect_location}");
+  exit();
+}
+
   function insert_categories() {
     global $connection;
     if(isset($_POST['submit'])){
@@ -127,7 +132,7 @@ function get_precise_stats($table, $stat, $cat1, $cat2) {
   return [$count_1, $count_2, $count_3];
 }
 
-function echo_stat_widgets($stat, $count, $color){
+function echo_stat_widgets($stat, $count, $color, $user_role){
   echo "<div class='col-lg-3 col-md-6'>
   <div class='panel panel-{$color}'>
       <div class='panel-heading'>
@@ -140,16 +145,18 @@ function echo_stat_widgets($stat, $count, $color){
                   <div>$stat</div>
               </div>
           </div>
+      </div>";
+    if($user_role === 'Admin'){
+      echo "<a href='{$stat}.php'>
+      <div class='panel-footer'>
+          <span class='pull-left'>View Details</span>
+          <span class='pull-right'><i class='fa fa-arrow-circle-right'></i></span>
+          <div class='clearfix'></div>
       </div>
-      <a href='{$stat}.php'>
-          <div class='panel-footer'>
-              <span class='pull-left'>View Details</span>
-              <span class='pull-right'><i class='fa fa-arrow-circle-right'></i></span>
-              <div class='clearfix'></div>
-          </div>
-      </a>
-  </div>
-</div>";
+    </a>";
+    }
+  echo "  </div>
+  </div>";
 }
 
 function is_admin($username) {
@@ -164,9 +171,11 @@ function is_admin($username) {
   $row = mysqli_fetch_array($result);
 
   if($row['user_role'] === 'Admin')  {
-    return true;
+    return 'Admin';
+  } else if ($row['user_role'] === 'Author') {
+    return 'Author';
   } else {
-    return false;
+    return 'Subscriber';
   }
 }
 
@@ -182,6 +191,43 @@ function username_exists($username) {
   } else {
     return false;
   }
+}
+
+function get_precise_user_stats($stat, $table, $cur_user, $cat1, $cat2){
+  global $connection;
+  if($table === 'comments'){
+    $query = "SELECT {$stat}, COUNT({$stat}) AS num_items FROM {$table} INNER JOIN posts ON post_id = comment_post_id WHERE post_author_id = {$cur_user} GROUP BY {$stat}";
+  } else {
+    $query = "SELECT {$stat}, COUNT({$stat}) AS num_items FROM {$table} WHERE post_author_id = {$cur_user} GROUP BY {$stat}";
+  }
+
+  $stat_query = mysqli_query($connection, $query);
+  confirmQuery($stat_query);
+  $count_1 = 0;
+  $count_2 = 0;
+  $count_3 = 0;
+  while($row = mysqli_fetch_assoc($stat_query)){
+      if($row["{$stat}"] === "{$cat1}"){
+          $count_1  = $row['num_items'];
+      } else if ($row["{$stat}"] === "{$cat2}") {
+          $count_2 = $row['num_items'];
+      } else {
+        $count_3 = $row['num_items'];
+      }
+  }
+  return [$count_1, $count_2, $count_3];
+}
+
+function get_user_table_count($table, $cur_user) {
+  global $connection;
+  if($table === "posts"){
+    $query = "SELECT * FROM {$table} WHERE post_author_id = {$cur_user}";
+  } else {
+    $query = "SELECT * FROM {$table} INNER JOIN posts ON post_id = comment_post_id WHERE post_author_id = {$cur_user}";
+  }
+  $select_all_posts = mysqli_query($connection, $query);
+  confirmQuery($select_all_posts);
+  return mysqli_num_rows($select_all_posts);
 }
 
 users_online();

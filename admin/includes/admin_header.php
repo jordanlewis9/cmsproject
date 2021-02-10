@@ -3,12 +3,28 @@
 <?php include "functions.php"; ?>
 <?php session_start(); ?>
 <?php
-    if(isset($_SESSION['user_role'])) {
-        if($_SESSION['user_role'] !== 'Admin') {
-            header("Location: ../index.php");
-        }
+    if(!isset($_SESSION['user_role'])) {
+        header("Location: /cmsproject/index");
     } else {
-        header("Location: ../index.php");
+        $current_user_role = $_SESSION['user_role'];
+        $current_user_id = $_SESSION['user_id'];
+    }
+
+    $current_url = $_SERVER['PHP_SELF'];
+    $current_basename = basename($current_url);
+
+    if($current_user_role === 'Subscriber' && $current_basename !== 'profile.php'){
+        redirect("/cmsproject/index");
+    }
+
+    $author_prohibited_urls = ["categories.php", "comments.php", "dashboard.php", "users.php"];
+
+    if($current_user_role === 'Author'){
+        foreach($author_prohibited_urls as $cur_url){
+            if($current_basename === $cur_url){
+                redirect("/cmsproject/index");
+            }
+        }
     }
 
 ?>

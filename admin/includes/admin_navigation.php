@@ -36,20 +36,30 @@
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
             <div class="collapse navbar-collapse navbar-ex1-collapse">
                 <ul class="nav navbar-nav side-nav">
+<?php if($current_user_role === 'Admin' || $current_user_role === 'Author'): ?>
+                    <li>
+                        <a href="index.php"><i class="fa fa-fw fa-dashboard"></i> My Data</a>
+                    </li>
+<?php endif; ?>
+<?php if($current_user_role === 'Admin'): ?>
                     <li>
                         <a href="index.php"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
                     </li>
+<?php endif; ?>
+<?php if($current_user_role === 'Admin' || $current_user_role === 'Author'): ?>
                     <li>
                         <a href="javascript:;" data-toggle="collapse" data-target="#posts_dropdown"><i class="fa fa-fw fa-arrows-v"></i> Posts <i class="fa fa-fw fa-caret-down"></i></a>
                         <ul id="posts_dropdown" class="collapse">
                             <li>
-                                <a href="posts.php">View All Posts</a>
+                                <a href="posts.php">View Posts</a>
                             </li>
                             <li>
                                 <a href="posts.php?source=add_post">Add Post</a>
                             </li>
                         </ul>
                     </li>
+<?php endif; ?>
+<?php if($current_user_role === 'Admin'): ?>
                     <li>
                         <a href="categories.php"><i class="fa fa-fw fa-wrench"></i> Categories</a>
                     </li>
@@ -65,11 +75,9 @@
                             <li>
                                 <a href="users.php?source=add_user">Add User</a>
                             </li>
-                            <li>
-                                <a href="users.php?source=edit_user">Edit User</a>
-                            </li>
                         </ul>
                     </li>
+<?php endif; ?>
                     <li>
                         <a href="profile.php"><i class="fa fa-fw fa-file"></i> Profile</a>
                     </li>

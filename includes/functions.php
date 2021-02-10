@@ -87,10 +87,10 @@ function confirmQuery($result) {
       } else {
         $message = "Welcome, $db_username";
         if($from_registration) {
-          header("Location: index.php?signed_in=$message");
+          header("Location: /cmsproject/index.php?signed_in=$message");
           exit;
         }
-        header("Location: ../index.php?signed_in=$message");
+        header("Location: /cmsproject/index.php?signed_in=$message");
         exit;
       }
     } else {
