@@ -124,7 +124,7 @@ include("delete_modal.php");
   while($row = mysqli_fetch_assoc($all_posts)){
     $post_id = $row['post_id'];
     $post_author = $row['post_author'];
-    $post_user = $row['post_user'];
+    $post_author_id = $row['post_author_id'];
     $post_title = $row['post_title'];
     $post_category_title = $row['cat_title'];
     $post_status = $row['post_status'];
@@ -141,22 +141,12 @@ include("delete_modal.php");
     if($current_user_role === 'Admin'){
       echo "<td><input type='checkbox' class='checkBoxes' name='checkBoxArray[]' value={$post_id}></td>";
     }
-    echo "<td>{$post_id}</td>";
-
-    if (!empty($post_author)){
-      echo "<td>{$post_author}</td>";
-    } else {
-      $user_query = "SELECT username FROM users WHERE user_id = {$post_user}";
-      $get_username = mysqli_query($connection, $user_query);
-      confirmQuery($get_username);
-      $post_user = mysqli_fetch_array($get_username)['username'];
-      echo "<td>{$post_user}</td>";
-    }
-    
-    echo "<td><a href='../post.php?p_id={$post_id}'>{$post_title}</a></td>";
-    echo "<td>{$post_category_title}</td>";
-    echo "<td>{$post_status}</td>
-          <td><img width=100 src='../images/{$post_image}' alt='Blog image preview'></td>
+    echo "<td>{$post_id}</td>
+          <td>{$post_author}</td>
+          <td><a href='../post.php?p_id={$post_id}'>{$post_title}</a></td>
+          <td>{$post_category_title}</td>
+          <td>{$post_status}</td>
+          <td><img width=100 src='/cmsproject/images/{$post_image}' alt='Blog image preview'></td>
           <td>{$post_tags}</td>
           <td>";
     if($current_user_role === 'Admin'){

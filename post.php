@@ -17,7 +17,7 @@
 if(isset($_GET['p_id'])){
     $post_id = esc($_GET['p_id']);
 } else {
-    header("Location: ../index");
+    header("Location: /cmsproject/index");
     exit;
 }
 
@@ -86,30 +86,24 @@ if(isset($_POST['unliked'])){
     redirect("/cmsproject/post/{$unlike_post_id}");
 }
 
-if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'Admin') {
-    $user_role = $_SESSION['user_role'];
-    $query = "SELECT * FROM posts WHERE post_id = {$post_id}";
-} else {
-    $query = "SELECT * FROM posts WHERE post_id = {$post_id} AND post_status = 'Published'";
-}
-
-$select_all_posts_query = mysqli_query($connection, $query);
-
-if (mysqli_num_rows($select_all_posts_query) === 0) {
-    header("Location: ../index");
-    exit;
-}
-
 $query = "SELECT * FROM posts WHERE post_id = {$post_id}";
 $select_all_posts_query = mysqli_query($connection, $query);
 while($row = mysqli_fetch_assoc($select_all_posts_query)){
     $post_title = $row['post_title'];
     $post_author = $row['post_author'];
+    $post_author_id=$row['post_author_id'];
     $post_date = $row['post_date'];
     $post_image = $row['post_image'];
     $post_content = $row['post_content'];
     $post_status = $row['post_status'];
     $post_likes = $row['likes'];
+    if($post_status === 'Draft'){
+        if($current_user !== $post_author_id){
+            if(!isset($_SESSION['user_role']) || !$_SESSION['user_role'] === 'Admin'){
+                redirect("/cmsproject/index");
+            }
+        }
+    }
 ?>
 
                 <!-- First Blog Post -->
@@ -120,7 +114,7 @@ while($row = mysqli_fetch_assoc($select_all_posts_query)){
                     by <a href="../index"><?php echo $post_author; ?></a>
                 </p>
 <?php 
-    if(!empty($user_role)) {
+    if($_SESSION['user_role'] === 'Admin' || $current_user === $post_author_id) {
         echo "<h4>$post_status</h4><hr>";
     }
 ?>
